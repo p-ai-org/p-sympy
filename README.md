@@ -11,6 +11,7 @@ SymPy actually has two different assumption systems—the “old” and “new�
 ## Project members
 
 - Tilo Reneau-Cardoso
+- Alan Jiang
 
 ## Purpose of this fork
 
