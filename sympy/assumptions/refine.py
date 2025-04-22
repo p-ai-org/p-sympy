@@ -1,6 +1,7 @@
 from __future__ import annotations
 from typing import Callable
 
+from sympy import Max
 from sympy.core import S, Add, Expr, Basic, Mul, Pow, Rational
 from sympy.core.logic import fuzzy_not
 from sympy.logic.boolalg import Boolean
@@ -403,3 +404,37 @@ handlers_dict: dict[str, Callable[[Expr, Boolean], Expr]] = {
     'sign': refine_sign,
     'MatrixElement': refine_matrixelement
 }
+
+def refine_min(expr, assumptions):
+    args = expr.args
+    keep = [True] * len(args)
+    for i in range(0, len(args)):
+        for j in range(i + 1, len(args)):
+            if ask(Q.gt(args[i], args[j], assumptions)):
+                keep[i] = False
+            if ask(Q.lt(args[i], args[j], assumptions)):
+                keep[j] = False
+                continue
+
+    new_args = []
+    for i in range(0, len(args)):
+        if keep[i]:
+            new_args.append(args[i])
+    return Max(new_args)
+
+def refine_max(expr, assumptions):
+    args = expr.args
+    keep = [True] * len(args)
+    for i in range(0, len(args)):
+        for j in range(i + 1, len(args)):
+            if ask(Q.gt(args[i], args[j], assumptions)):
+                keep[j] = False
+            if ask(Q.lt(args[i], args[j], assumptions)):
+                keep[i] = False
+                continue
+
+    new_args = []
+    for i in range(0, len(args)):
+        if keep[i]:
+            new_args.append(args[i])
+    return Max(new_args)
